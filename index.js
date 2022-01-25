@@ -2,6 +2,17 @@ const express = require("express");
 const body_parser = require("body-parser");
 const app = express();
 
+const Questions = require("./database/Questions");
+const connection = require("./database/database");
+
+//  DATABASE   
+connection
+    .authenticate().then(() => {
+        console.log("conexão feita com o banco de dados");
+    }).catch(error => {
+        console.log(error);
+    })
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
@@ -24,7 +35,12 @@ app.get("/ask", (req, res) => {
 app.post("/save-question", (req, res) => {
     var titulo = req.body.titulo;
     var descricao = req.body.descricao;
-    res.send(`titulo: ${titulo} descrição: ${descricao}`);
+    Questions.create({
+        title: titulo,
+        description: descricao
+    }).then(() => {
+        res.redirect("/");
+    });
 });
 
 
