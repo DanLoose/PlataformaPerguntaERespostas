@@ -11,10 +11,20 @@
 <body>
     <h1>Olá, <%= nome %>
     </h1>
-    <p>Sou programador da linguagem <%= lang %>
-    </p>
-    <p>Trabalho como Integration Developer na <%= empresa %>
-    </p>
+
+    <ul>
+
+        <% produtos.forEach(produto=> { %>
+            <li>
+                <p>
+                    <%= produto.nome %> custa R$<%= produto.preco %>
+                </p>
+                <hr>
+            </li>
+            <% }) %>
+
+    </ul>
+
 </body>
 
 </html>
