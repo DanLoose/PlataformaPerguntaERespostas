@@ -4,7 +4,33 @@
 
 <body>
 
+    <!-- BARRA DE NAVEGAÇÃO TOPO -->
     <%- include("partials/navbar.ejs") %>
+
+    <div class="container">
+
+        <!-- POPULANDO PAGINA COM PERGUNTAS E DESCRIÇÕES -->
+        <% questions.forEach(question => { %>
+
+        <!-- CARD COM TITULO E DESCRIÇÃO PARA CADA PERGUNTA -->
+        <br>
+        <div class="card">
+
+            <div class="card-header bg-info">
+                <h3><%= question.title %></h3>
+            </div>
+
+            <div class="card-body">
+                <p>
+                    <%= question.description %>
+                </p>
+                <a href="/question/<%= question.id %>" class="btn btn-info">Respostas</a>
+            </div>
+        </div>
+
+        <% }); %>
+    </div>
+
     <%- include("partials/scripts.ejs") %>
 
 </body>

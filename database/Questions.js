@@ -15,7 +15,7 @@ const Questions = connection.define("questions", {
 Questions.sync({
     force: false
 }).then(() => {
-    console.log("table created!");
+    console.log("table of questions created!");
 });
 
 module.exports = Questions;

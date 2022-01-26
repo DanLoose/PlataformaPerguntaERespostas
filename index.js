@@ -2,6 +2,7 @@ const express = require("express");
 const body_parser = require("body-parser");
 const app = express();
 
+const Answers = require("./database/Answers");
 const Questions = require("./database/Questions");
 const connection = require("./database/database");
 
@@ -22,25 +23,82 @@ app.use(body_parser.urlencoded({
 }));
 app.use(body_parser.json());
 
+//ROUTES
 app.get("/", (req, res) => {
-    res.render("index");
+    Questions.findAll({
+        raw: true,
+        order: [
+            ['id', 'DESC']
+        ]
+    }).then(questions => {
+        res.render("index", {
+            questions: questions
+        });
+    });
 });
 
+app.get("/question/:id", (req, res) => {
+    var id = req.params.id;
+    Questions.findOne({
+        where: {
+            id: id
+        }
+    }).then((question) => {
+        if (question) {
 
-//ROUTES
+            Answers.findAll({
+                raw: true,
+                where: {
+                    answerId: question.id
+                },
+                order: [
+                    ['id', 'DESC']
+                ]
+            }).then((answers) => {
+                res.render("question", {
+                    question: question,
+                    answers: answers
+                });
+            });
+
+        } else {
+            res.redirect("/");
+        }
+    });
+});
+
 app.get("/ask", (req, res) => {
     res.render("ask");
+});
+
+app.post("/save-answer", (req, res) => {
+    var resposta = req.body.answer;
+    var id = req.body.id;
+    if (id && resposta) {
+        Answers.create({
+            body: resposta,
+            answerId: id
+        }).then(() => {
+            res.redirect(`/question/${id}`);
+        });
+    } else {
+        res.redirect("/");
+    }
 });
 
 app.post("/save-question", (req, res) => {
     var titulo = req.body.titulo;
     var descricao = req.body.descricao;
-    Questions.create({
-        title: titulo,
-        description: descricao
-    }).then(() => {
-        res.redirect("/");
-    });
+    if (titulo && descricao) {
+        Questions.create({
+            title: titulo,
+            description: descricao
+        }).then(() => {
+            res.redirect("/");
+        });
+    } else {
+        res.redirect("/")
+    }
 });
 
 
